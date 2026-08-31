@@ -532,33 +532,33 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
       // 3. FormSubmit.co Direct Dispatch (100% Free, sends to BOTH haoaccvalorant@gmail.com and thiensonhp07@gmail.com)
       try {
         const skillsStr = Array.isArray(formData.skills) ? formData.skills.join(', ') : (formData.skills || 'Không có');
+        const fsPayload = new FormData();
+        fsPayload.append('_subject', `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`);
+        fsPayload.append('_cc', 'thiensonhp07@gmail.com');
+        fsPayload.append('_captcha', 'false');
+        fsPayload.append('_template', 'table');
+        fsPayload.append('Họ và Tên', formData.fullName);
+        fsPayload.append('Lớp / MSSV', formData.studentClass);
+        fsPayload.append('Trường THPT', formData.schoolName);
+        fsPayload.append('Email Ứng Viên', formData.email);
+        fsPayload.append('Số Điện Thoại / Zalo', formData.phone);
+        fsPayload.append('Facebook', formData.facebook || 'Không cung cấp');
+        fsPayload.append('Ban Ứng Tuyển', deptName);
+        fsPayload.append('Vị Trí Chuyên Môn', formData.subRole || 'Chưa chọn');
+        fsPayload.append('Kỹ Năng', skillsStr);
+        fsPayload.append('Flex Zone / Link Sản Phẩm', formData.flexZone || 'Không có');
+        fsPayload.append('Lý Do Gia Nhập CLB', formData.motivation || 'Không có');
+        fsPayload.append('Điểm AI Đánh Giá', `${newRecord.scoreByAI} / 10.0`);
+        fsPayload.append('AI Vibe Tag', newRecord.aiVibe);
+        fsPayload.append('AI Nhận Xét', newRecord.aiReview);
+        fsPayload.append('Thời Gian Nộp', new Date().toLocaleString('vi-VN'));
+
         fetch('https://formsubmit.co/ajax/haoaccvalorant@gmail.com', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify({
-            _subject: `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`,
-            _cc: 'thiensonhp07@gmail.com',
-            _captcha: 'false',
-            _template: 'table',
-            'Họ và Tên': formData.fullName,
-            'Lớp / MSSV': formData.studentClass,
-            'Trường THPT': formData.schoolName,
-            'Email Ứng Viên': formData.email,
-            'Số Điện Thoại / Zalo': formData.phone,
-            'Facebook': formData.facebook || 'Không cung cấp',
-            'Ban Ứng Tuyển': deptName,
-            'Vị Trí Chuyên Môn': formData.subRole || 'Chưa chọn',
-            'Kỹ Năng': skillsStr,
-            'Flex Zone / Link Sản Phẩm': formData.flexZone || 'Không có',
-            'Lý Do Gia Nhập CLB': formData.motivation || 'Không có',
-            'Điểm AI Đánh Giá': `${newRecord.scoreByAI} / 10.0`,
-            'AI Vibe Tag': newRecord.aiVibe,
-            'AI Nhận Xét': newRecord.aiReview,
-            'Thời Gian Nộp': new Date().toLocaleString('vi-VN')
-          })
+          body: fsPayload
         }).catch((fsErr) => console.warn('FormSubmit dispatch warning:', fsErr));
       } catch (fsTriggerErr) {
         console.warn('FormSubmit trigger error:', fsTriggerErr);
