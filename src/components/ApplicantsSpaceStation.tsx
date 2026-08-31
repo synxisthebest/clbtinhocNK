@@ -144,15 +144,17 @@ export function ApplicantsSpaceStation() {
   const [selectedDeptFilter, setSelectedDeptFilter] = useState<string>('all');
 
   useEffect(() => {
-    // Real-time listener for applications in Firestore
+    const OFFICIAL_LAUNCH_TIME = '2026-08-31T12:53:00.000Z';
     const q = query(collection(db, 'applications'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const list: ApplicationRecord[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as ApplicationRecord),
-        }));
+        const list: ApplicationRecord = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...(doc.data() as ApplicationRecord),
+          }))
+          .filter((app) => (app.createdAt || '') >= OFFICIAL_LAUNCH_TIME);
         setApplicants(list);
         setLoading(false);
       },

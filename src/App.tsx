@@ -19,11 +19,17 @@ export default function App() {
   const [applicantsCount, setApplicantsCount] = useState<number>(0);
 
   useEffect(() => {
+    // Official launch cutoff timestamp to reset test applicants
+    const OFFICIAL_LAUNCH_TIME = '2026-08-31T12:53:00.000Z';
+
     // Listen for total applicants count from Firestore in real-time
     const unsubscribe = onSnapshot(
       collection(db, 'applications'),
       (snapshot) => {
-        setApplicantsCount(snapshot.size);
+        const officialApps = snapshot.docs.filter(
+          (d) => (d.data().createdAt || '') >= OFFICIAL_LAUNCH_TIME
+        );
+        setApplicantsCount(officialApps.length);
       },
       (err) => {
         console.error('Firestore count listener error:', err);
