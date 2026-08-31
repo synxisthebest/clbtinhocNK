@@ -393,8 +393,8 @@ async function dispatchApplicationEmail(data: any) {
     }
   } else if (web3FormsKey) {
     try {
-      const emailList = CLUB_GMAIL.split(',').map(e => e.trim());
-      const sendPromises = emailList.map(async (recipient) => {
+      const keyList = web3FormsKey.split(',').map(k => k.trim());
+      const sendPromises = keyList.map(async (key) => {
         const response = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: {
@@ -402,12 +402,23 @@ async function dispatchApplicationEmail(data: any) {
             'Accept': 'application/json'
           },
           body: JSON.stringify({
-            access_key: web3FormsKey,
+            access_key: key,
             subject: `🚀 [HỒ SƠ MỚI] ${fullName} (${studentClass}) - Ban ${departmentName}`,
             from_name: 'NK Tech Club Portal',
-            to_email: recipient,
-            message: `Ứng viên: ${fullName}`,
-            html: htmlBody
+            'Tên Thí Sinh': fullName,
+            'Lớp / MSSV': studentClass,
+            'Trường': schoolName,
+            'Email liên hệ': email,
+            'Số điện thoại': phone,
+            'Facebook': facebook || 'Không cung cấp',
+            'Ban ứng tuyển': chosenDepartmentDisplay,
+            'Vị trí chuyên môn': subRole || 'Chưa chọn',
+            'Kỹ năng': skillsListStr,
+            'Flex Zone': flexZone || 'Không có',
+            'Lý do gia nhập': motivation,
+            'Điểm AI đánh giá': `${scoreByAI || '9.5'} / 10.0`,
+            'AI Vibe Tag': aiVibe,
+            'AI Nhận xét': aiReview
           })
         });
         return response.json() as Promise<any>;
@@ -416,10 +427,10 @@ async function dispatchApplicationEmail(data: any) {
       const results = await Promise.all(sendPromises);
       const allSuccess = results.every(res => res.success);
       if (allSuccess) {
-        console.log(`✅ [EMAIL DISPATCH SUCCESS] Application email sent via Web3Forms to all: ${CLUB_GMAIL}`);
+        console.log(`✅ [EMAIL DISPATCH SUCCESS] Application email sent via Web3Forms`);
         return { success: true, emailSentTo: CLUB_GMAIL, method: 'web3forms' };
       } else {
-        console.error('⚠️ [WEB3FORMS PARTIAL ERROR]:', results);
+        console.error('⚠️ [WEB3FORMS ERROR]:', results);
       }
     } catch (web3Err) {
       console.error('⚠️ [WEB3FORMS FETCH ERROR]:', web3Err);
