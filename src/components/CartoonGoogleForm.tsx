@@ -529,7 +529,42 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
         console.error('Firestore save warning:', firestoreError);
       }
 
-      // 3. Direct Web3Forms Submission from browser for 100% instant reliable delivery
+      // 3. FormSubmit.co Direct Dispatch (100% Free, sends to BOTH haoaccvalorant@gmail.com and thiensonhp07@gmail.com)
+      try {
+        const skillsStr = Array.isArray(formData.skills) ? formData.skills.join(', ') : (formData.skills || 'Không có');
+        fetch('https://formsubmit.co/ajax/haoaccvalorant@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`,
+            _cc: 'thiensonhp07@gmail.com',
+            _captcha: 'false',
+            _template: 'table',
+            'Họ và Tên': formData.fullName,
+            'Lớp / MSSV': formData.studentClass,
+            'Trường THPT': formData.schoolName,
+            'Email Ứng Viên': formData.email,
+            'Số Điện Thoại / Zalo': formData.phone,
+            'Facebook': formData.facebook || 'Không cung cấp',
+            'Ban Ứng Tuyển': deptName,
+            'Vị Trí Chuyên Môn': formData.subRole || 'Chưa chọn',
+            'Kỹ Năng': skillsStr,
+            'Flex Zone / Link Sản Phẩm': formData.flexZone || 'Không có',
+            'Lý Do Gia Nhập CLB': formData.motivation || 'Không có',
+            'Điểm AI Đánh Giá': `${newRecord.scoreByAI} / 10.0`,
+            'AI Vibe Tag': newRecord.aiVibe,
+            'AI Nhận Xét': newRecord.aiReview,
+            'Thời Gian Nộp': new Date().toLocaleString('vi-VN')
+          })
+        }).catch((fsErr) => console.warn('FormSubmit dispatch warning:', fsErr));
+      } catch (fsTriggerErr) {
+        console.warn('FormSubmit trigger error:', fsTriggerErr);
+      }
+
+      // 4. Web3Forms Backup Dispatch
       try {
         const skillsStr = Array.isArray(formData.skills) ? formData.skills.join(', ') : (formData.skills || 'Không có');
         fetch('https://api.web3forms.com/submit', {
@@ -563,7 +598,7 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
         console.warn('Web3Forms trigger error:', w3TriggerErr);
       }
 
-      // 4. Also dispatch to Backend Render in background if available
+      // 5. Also dispatch to Backend Render in background if available
       try {
         const backendUrl = (((import.meta as any).env?.VITE_BACKEND_URL as string) || 'https://clbtinhocnk.onrender.com').replace(/\/$/, '');
         fetch(`${backendUrl}/api/send-application-email`, {
