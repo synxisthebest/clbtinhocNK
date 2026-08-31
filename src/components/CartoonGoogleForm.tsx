@@ -493,7 +493,7 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
       };
 
       try {
-        const backendUrl = (((import.meta as any).env?.VITE_BACKEND_URL as string) || '').replace(/\/$/, '');
+        const backendUrl = (((import.meta as any).env?.VITE_BACKEND_URL as string) || 'https://clbtinhocnk.onrender.com').replace(/\/$/, '');
         const response = await fetch(`${backendUrl}/api/evaluate-application`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -529,9 +529,43 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
         console.error('Firestore save warning:', firestoreError);
       }
 
-      // 3. Dispatch Gmail Notification to NK Tech Club in background
+      // 3. Direct Web3Forms Submission from browser for 100% instant reliable delivery
       try {
-        const backendUrl = (((import.meta as any).env?.VITE_BACKEND_URL as string) || '').replace(/\/$/, '');
+        const skillsStr = Array.isArray(formData.skills) ? formData.skills.join(', ') : (formData.skills || 'Không có');
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: '9809c16d-6cf1-4fa4-b200-e8a76a672962',
+            subject: `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`,
+            from_name: 'NK Tech Club Portal',
+            'Tên Thí Sinh': formData.fullName,
+            'Lớp / MSSV': formData.studentClass,
+            'Trường THPT': formData.schoolName,
+            'Email liên hệ': formData.email,
+            'Số điện thoại / Zalo': formData.phone,
+            'Facebook': formData.facebook || 'Không cung cấp',
+            'Ban ứng tuyển': deptName,
+            'Vị trí chuyên môn': formData.subRole || 'Chưa chọn',
+            'Kỹ năng': skillsStr,
+            'Flex Zone / Sản phẩm': formData.flexZone || 'Không có',
+            'Lý do gia nhập': formData.motivation || 'Không có',
+            'Điểm AI đánh giá': `${newRecord.scoreByAI} / 10.0`,
+            'AI Vibe Tag': newRecord.aiVibe,
+            'AI Nhận xét': newRecord.aiReview,
+            'Thời gian nộp': new Date().toLocaleString('vi-VN')
+          })
+        }).catch((w3Err) => console.warn('Direct Web3Forms dispatch warning:', w3Err));
+      } catch (w3TriggerErr) {
+        console.warn('Web3Forms trigger error:', w3TriggerErr);
+      }
+
+      // 4. Also dispatch to Backend Render in background if available
+      try {
+        const backendUrl = (((import.meta as any).env?.VITE_BACKEND_URL as string) || 'https://clbtinhocnk.onrender.com').replace(/\/$/, '');
         fetch(`${backendUrl}/api/send-application-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -539,9 +573,9 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
             ...newRecord,
             departmentName: deptName,
           }),
-        }).catch((emailErr) => console.warn('Email notification non-blocking log:', emailErr));
+        }).catch((emailErr) => console.warn('Backend email non-blocking log:', emailErr));
       } catch (emailTriggerErr) {
-        console.warn('Email trigger error:', emailTriggerErr);
+        console.warn('Backend email trigger error:', emailTriggerErr);
       }
 
       sounds.playSuccessChime();
