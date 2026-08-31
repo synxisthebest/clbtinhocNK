@@ -144,7 +144,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialDepartm
 
     try {
       // Step 1: Call Express Gemini Evaluation API
-      const backendUrl = ((import.meta as any).env?.VITE_BACKEND_URL || 'https://clb-tin-h-c-3.onrender.com').replace(/\/$/, '');
+      const backendUrl = ((import.meta as any).env?.VITE_BACKEND_URL || 'https://clbtinhocnk.onrender.com').replace(/\/$/, '');
       const evalRes = await fetch(`${backendUrl}/api/evaluate-application`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

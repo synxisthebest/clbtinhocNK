@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/CLB_TIN_H-C/',
+    base: '/clbtinhocNK/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
