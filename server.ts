@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-const CLUB_GMAIL = process.env.CLUB_GMAIL || process.env.SMTP_USER || 'thiensonhp07@gmail.com';
+const CLUB_GMAIL = process.env.CLUB_GMAIL || process.env.SMTP_USER || 'nkdeveloperclub@gmail.com';
 
 function escapeHtml(str: string): string {
   if (!str) return '';

@@ -489,7 +489,6 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
     try {
       const fsPayload = new FormData();
       fsPayload.append('_subject', `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`);
-      fsPayload.append('_cc', 'thiensonhp07@gmail.com');
       fsPayload.append('_captcha', 'false');
       fsPayload.append('_template', 'table');
       fsPayload.append('Họ và Tên', formData.fullName);
@@ -550,7 +549,7 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
 
       fsPayload.append('Thoi Gian Nop', new Date().toLocaleString('vi-VN'));
 
-      fetch('https://formsubmit.co/ajax/haoaccvalorant@gmail.com', {
+      fetch('https://formsubmit.co/ajax/nkdeveloperclub@gmail.com', {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: fsPayload
