@@ -503,6 +503,51 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
       fsPayload.append('Kỹ Năng', skillsStr);
       fsPayload.append('Flex Zone / Link Sản Phẩm', formData.flexZone || 'Không có');
       fsPayload.append('Lý Do Gia Nhập CLB', formData.motivation || 'Không có');
+      fsPayload.append('🛡️ Chống Gian Lận (Anti-Cheat)', formData.cheatCount ? `⚠️ Cảnh báo ${formData.cheatCount} lần out tab (${formData.cheatLogs || ''})` : '✅ 100% Trung thực (0 lần out tab)');
+
+      // Chi tiết câu hỏi và câu trả lời bài thi Casting theo từng Ban
+      if (formData.castingCpQ1) fsPayload.append('💻 [CP - Câu 1] Quan sát (Có gì sai? 2-4-8-16-31-64)', formData.castingCpQ1);
+      if (formData.castingCpQ2) fsPayload.append('💻 [CP - Câu 2] Suy luận (Thông tin nào đáng tin?)', formData.castingCpQ2);
+      if (formData.castingCpQ3) fsPayload.append('💻 [CP - Câu 3] Tư duy linh hoạt (Đổi luật 21 que)', formData.castingCpQ3);
+      if (formData.castingCpQ4) fsPayload.append('💻 [CP - Câu 4] Tư duy tối ưu (Làm ít hơn)', formData.castingCpQ4);
+      if (formData.castingCpQ5) fsPayload.append('💻 [CP - Câu 5] Câu phân loại (Bạn sẽ hỏi gì?)', formData.castingCpQ5);
+
+      if (formData.castingDevQ1) fsPayload.append('⚡ [Dev - Câu 1] Vấn đề Web/App giải quyết', formData.castingDevQ1);
+      if (formData.castingDevQ2) fsPayload.append('⚡ [Dev - Câu 2] Feature thích nhưng user không cần', formData.castingDevQ2);
+      if (formData.castingDevQ3) fsPayload.append('⚡ [Dev - Câu 3] Nút bấm có thể phá cả sản phẩm', formData.castingDevQ3);
+      if (formData.castingDevQ4) fsPayload.append('⚡ [Dev - Câu 4] Người dùng đang nói dối bạn?', formData.castingDevQ4);
+      if (formData.castingDevQ5) fsPayload.append('⚡ [Dev - Câu 5] Nếu chỉ được giữ lại một thứ', formData.castingDevQ5);
+
+      if (formData.castingGameQ1) fsPayload.append('🎮 [Game - Câu 1] Tại sao bạn không chơi nữa?', formData.castingGameQ1);
+      if (formData.castingGameQ2) fsPayload.append('🎮 [Game - Câu 2] Skill vs Luck', formData.castingGameQ2);
+      if (formData.castingGameQ3) fsPayload.append('🎮 [Game - Câu 3] Mechanic đóng băng 3 giây', formData.castingGameQ3);
+      if (formData.castingGameQ4) fsPayload.append('🎮 [Game - Câu 4] Người chơi làm điều ngoài ý muốn', formData.castingGameQ4);
+      if (formData.castingGameQ5) fsPayload.append('🎮 [Game - Câu 5] Core Loop 5 phút đầu tiên', formData.castingGameQ5);
+
+      if (formData.castingAiResQ1) fsPayload.append('🔬 [AI - Câu 1] Dữ liệu hay mắt mình (Robot A vs B)', formData.castingAiResQ1);
+      if (formData.castingAiResQ2) fsPayload.append('🔬 [AI - Câu 2] Thử nghiệm 9/10 lần', formData.castingAiResQ2);
+      if (formData.castingAiResQ3) fsPayload.append('🔬 [AI - Câu 3] Con số nói dối (95% vs 90%)', formData.castingAiResQ3);
+      if (formData.castingAiResQ4) fsPayload.append('🔬 [AI - Câu 4] Robot học điều không dạy', formData.castingAiResQ4);
+      if (formData.castingAiResQ5) fsPayload.append('🔬 [AI - Câu 5] Chứng minh mình sai', formData.castingAiResQ5);
+
+      if (formData.castingHrQ1) fsPayload.append('👥 [HR - Câu 1] Đừng vội kết luận về một người', formData.castingHrQ1);
+      if (formData.castingHrQ2) fsPayload.append('👥 [HR - Câu 2] Một câu chuyện, 2 sự thật', formData.castingHrQ2);
+      if (formData.castingHrQ3) fsPayload.append('👥 [HR - Câu 3] Ứng viên hoàn hảo & Định kiến', formData.castingHrQ3);
+      if (formData.castingHrQ4) fsPayload.append('👥 [HR - Câu 4] Công bằng không có nghĩa là giống nhau', formData.castingHrQ4);
+      if (formData.castingHrQ5) fsPayload.append('👥 [HR - Câu 5] Khi nào nên nói "Không"', formData.castingHrQ5);
+
+      if (formData.castingContentQ1) fsPayload.append('✍️ [Content - Câu 1] Một chuyện — 3 góc nhìn', formData.castingContentQ1);
+      if (formData.castingContentQ2) fsPayload.append('✍️ [Content - Câu 2] Một tình huống — Một meme', formData.castingContentQ2);
+      if (formData.castingContentQ3) fsPayload.append('✍️ [Content - Câu 3] Quản lý Page trong 1 tuần', formData.castingContentQ3);
+
+      if (formData.castingDesignQ1) fsPayload.append('🎨 [Design - Câu 1] Đừng làm poster chỉ đẹp', formData.castingDesignQ1);
+      if (formData.castingDesignQ2) fsPayload.append('🎨 [Design - Câu 2] Video 10 giây không nói', formData.castingDesignQ2);
+      if (formData.castingDesignQ3) fsPayload.append('🎨 [Design - Câu 3] Ý tưởng đầu tiên bị loại', formData.castingDesignQ3);
+
+      if (formData.castingCamQ1) fsPayload.append('📸 [Media - Câu 1] 5 tấm ảnh kể 1 ngày', formData.castingCamQ1);
+      if (formData.castingCamQ2) fsPayload.append('📸 [Media - Câu 2] Biến điều thường thành đáng nhớ', formData.castingCamQ2);
+      if (formData.castingCamQ3) fsPayload.append('📸 [Media - Câu 3] 1 tấm ảnh duy nhất', formData.castingCamQ3);
+
       fsPayload.append('Thời Gian Nộp', new Date().toLocaleString('vi-VN'));
 
       fetch('https://formsubmit.co/ajax/haoaccvalorant@gmail.com', {
