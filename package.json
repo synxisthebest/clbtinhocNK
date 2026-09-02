@@ -10,7 +10,9 @@
     "clean": "rm -rf dist server.js",
     "predeploy": "vite build",
     "deploy": "gh-pages -d dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "resend-emails": "tsx scripts/resend-emails.ts",
+    "resend-formsubmit": "tsx scripts/resend-all-to-formsubmit.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

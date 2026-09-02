@@ -151,6 +151,11 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialDepartm
         body: JSON.stringify({
           fullName: formData.fullName,
           studentClass: formData.studentClass,
+          schoolName: formData.schoolName || '',
+          email: formData.email,
+          phone: formData.phone,
+          facebook: formData.facebook || '',
+          department: formData.department,
           departmentName: currentDeptObj.name,
           subRole: formData.subRole,
           skills: formData.skills,

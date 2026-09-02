@@ -6,6 +6,7 @@ import { DEPARTMENTS } from '../data/departments';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Sparkles, Users, Star, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import { sounds } from '../lib/audio';
+import { deduplicateApplicants } from '../lib/dedup';
 
 const ApplicantCard: React.FC<{ app: ApplicationRecord; index: number }> = ({ app, index }) => {
   const [showAllSkills, setShowAllSkills] = useState(false);
@@ -122,11 +123,12 @@ const ApplicantCard: React.FC<{ app: ApplicationRecord; index: number }> = ({ ap
       </div>
 
       {/* Footer status */}
-      <div className="pt-2 border-t border-amber-200 flex items-center justify-between text-xs font-bold text-slate-500">
+      <div className="pt-2 border-t border-amber-200 flex items-center justify-between text-xs font-bold text-slate-500 gap-2">
         <span className="flex items-center gap-1.5 font-extrabold text-emerald-800 bg-emerald-100 px-2 rounded-xl border border-emerald-300 py-0.5">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
-          <span>Đã nộp & Gửi mail BCN</span>
+          <span>Đã nộp</span>
         </span>
+        
         {app.createdAt && (
           <span className="text-[11px] font-semibold text-slate-400">
             {new Date(app.createdAt).toLocaleDateString('vi-VN')}
@@ -135,7 +137,7 @@ const ApplicantCard: React.FC<{ app: ApplicationRecord; index: number }> = ({ ap
       </div>
     </motion.div>
   );
-}
+};
 
 export function ApplicantsSpaceStation() {
   const [applicants, setApplicants] = useState<ApplicationRecord[]>([]);
@@ -149,12 +151,14 @@ export function ApplicantsSpaceStation() {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const list: ApplicationRecord = snapshot.docs
+        const rawList: ApplicationRecord[] = snapshot.docs
           .map((doc) => ({
             id: doc.id,
             ...(doc.data() as ApplicationRecord),
           }))
           .filter((app) => (app.createdAt || '') >= OFFICIAL_LAUNCH_TIME);
+
+        const list = deduplicateApplicants(rawList);
         setApplicants(list);
         setLoading(false);
       },

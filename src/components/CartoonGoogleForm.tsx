@@ -11,11 +11,17 @@ import { Check, ChevronRight, ChevronLeft, Sparkles, Rocket, Star, Heart, User, 
 export type CastingModuleType = 'hr' | 'ai_res' | 'content' | 'cp' | 'dev' | 'game' | 'design' | 'cameraman';
 
 export function getRequiredCastingModules(subRoleStr: string, departmentId: string, availableRoles: string[]): CastingModuleType[] {
-  if (!subRoleStr) return ['dev'];
+  if (!subRoleStr) {
+    if (departmentId === 'chuyen-mon') return ['dev'];
+    if (departmentId === 'truyen-thong') return ['content'];
+    if (departmentId === 'nhan-su') return ['hr'];
+    return ['dev'];
+  }
 
+  const allAvailableRoles = DEPARTMENTS.flatMap((d) => d.subRoles);
   const parseSubRolesLocal = (str: string): string[] => {
     if (str.includes(' | ')) return str.split(' | ').filter(Boolean);
-    if (availableRoles.includes(str)) return [str];
+    if (allAvailableRoles.includes(str)) return [str];
     if (str.includes(', ')) return str.split(', ').filter(Boolean);
     return [str];
   };
@@ -25,29 +31,39 @@ export function getRequiredCastingModules(subRoleStr: string, departmentId: stri
 
   selectedRoles.forEach((role) => {
     const rLower = role.toLowerCase();
-    if (rLower.includes('hr') || rLower.includes('nhân sự') || rLower.includes('quản lý') || rLower.includes('sự kiện') || rLower.includes('event') || rLower.includes('logistics') || rLower.includes('hậu cần')) {
-      modulesSet.add('hr');
-    }
-    if (rLower.includes('ai') || rLower.includes('data') || rLower.includes('research') || rLower.includes('robot') || rLower.includes('nghiên cứu') || rLower.includes('khoa học') || rLower.includes('machine') || rLower.includes('ml')) {
-      modulesSet.add('ai_res');
-    }
-    if (rLower.includes('content') || rLower.includes('writer') || rLower.includes('viết bài') || rLower.includes('biên tập') || rLower.includes('sáng tạo nội dung')) {
-      modulesSet.add('content');
-    }
-    if (rLower.includes('cp') || rLower.includes('học thuật') || rLower.includes('competitive') || rLower.includes('thuật toán') || rLower.includes('c++') || rLower.includes('python') || rLower.includes('chuyên tin')) {
+    // 1. Competitive Programming
+    if (rLower.includes('competitive') || rLower.includes('chuyên tin') || rLower.includes('c++ / python') || rLower.includes('thuật toán') || rLower.includes('cp')) {
       modulesSet.add('cp');
     }
-    if (rLower.includes('web') || rLower.includes('app') || rLower.includes('full-stack') || rLower.includes('fullstack') || rLower.includes('dev') || rLower.includes('front') || rLower.includes('back') || rLower.includes('vibe')) {
-      modulesSet.add('dev');
+    // 2. Web / App Dev
+    if (rLower.includes('web/app') || rLower.includes('web') || rLower.includes('full-stack') || rLower.includes('vibe coding') || rLower.includes('developer')) {
+      if (!rLower.includes('game developer')) {
+        modulesSet.add('dev');
+      }
     }
-    if (rLower.includes('game') || rLower.includes('gamedev') || rLower.includes('unity') || rLower.includes('roblox') || rLower.includes('unreal')) {
+    // 3. Game Developer
+    if (rLower.includes('game') || rLower.includes('roblox') || rLower.includes('2d, roblox 3d') || rLower.includes('unity')) {
       modulesSet.add('game');
     }
-    if (rLower.includes('design') || rLower.includes('poster') || rLower.includes('video') || rLower.includes('graphic') || rLower.includes('edit') || rLower.includes('thiết kế')) {
+    // 4. AI & Data Science Researcher
+    if (rLower.includes('ai & data') || rLower.includes('researcher') || rLower.includes('robotic') || rLower.includes('khoa học') || rLower.includes('science')) {
+      modulesSet.add('ai_res');
+    }
+    // 5. Content Writer
+    if (rLower.includes('content writer') || rLower.includes('meme x tech') || rLower.includes('viết bài') || rLower.includes('content')) {
+      modulesSet.add('content');
+    }
+    // 6. Designer & Video Editor
+    if (rLower.includes('designer') || rLower.includes('video editor') || rLower.includes('graphic design') || rLower.includes('poster') || rLower.includes('design')) {
       modulesSet.add('design');
     }
-    if (rLower.includes('chụp') || rLower.includes('cameraman') || rLower.includes('phim') || rLower.includes('photo') || rLower.includes('nhiếp ảnh') || rLower.includes('media')) {
+    // 7. Cameraman / Photographer
+    if (rLower.includes('cameraman') || rLower.includes('photographer') || rLower.includes('quay phim') || rLower.includes('chụp ảnh')) {
       modulesSet.add('cameraman');
+    }
+    // 8. HR & Operations
+    if (rLower.includes('quản lý nhân sự') || rLower.includes('hr') || rLower.includes('operations') || rLower.includes('sự kiện') || rLower.includes('logistics')) {
+      modulesSet.add('hr');
     }
   });
 
@@ -56,7 +72,6 @@ export function getRequiredCastingModules(subRoleStr: string, departmentId: stri
       modulesSet.add('dev');
     } else if (departmentId === 'truyen-thong') {
       modulesSet.add('content');
-      modulesSet.add('cameraman');
     } else if (departmentId === 'nhan-su') {
       modulesSet.add('hr');
     } else {
@@ -65,6 +80,20 @@ export function getRequiredCastingModules(subRoleStr: string, departmentId: stri
   }
 
   return Array.from(modulesSet);
+}
+
+export function getModuleLabel(mod: CastingModuleType): string {
+  switch (mod) {
+    case 'dev': return '💻 Web/App Developer (5 câu)';
+    case 'game': return '🎮 Game Developer (5 câu)';
+    case 'cp': return '🧠 Chuyên Tin & Thuật Toán (5 câu)';
+    case 'ai_res': return '🔬 AI & Data Science / Robotics (5 câu)';
+    case 'content': return '✍️ Content Writer (3 câu)';
+    case 'design': return '🎨 Graphic Design & Video Editor (3 câu)';
+    case 'cameraman': return '📸 Cameraman & Photographer (3 câu)';
+    case 'hr': return '👥 HR & Operations (5 câu)';
+    default: return 'Casting Challenge';
+  }
 }
 
 interface CartoonGoogleFormProps {
@@ -103,6 +132,8 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
   const [cheatLogs, setCheatLogs] = useState<string[]>([]);
   const [showCheatModal, setShowCheatModal] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [showCrossDeptRoles, setShowCrossDeptRoles] = useState<boolean>(false);
+  const isSubmittingRef = useRef<boolean>(false);
 
   // Form State
   const [formData, setFormData] = useState<ApplicationFormData>({
@@ -469,6 +500,8 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
 
   // Submit Application
   const handleSubmit = async () => {
+    if (isSubmitting || isSubmittingRef.current) return;
+
     const firstInvalidStep = validateAllPreviousSteps(8);
     if (firstInvalidStep !== null) {
       setDirection(firstInvalidStep > currentStep ? 1 : -1);
@@ -477,6 +510,7 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setErrorMessage('');
     sounds.playRocketWhoosh();
@@ -549,11 +583,27 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
 
       fsPayload.append('Thoi Gian Nop', new Date().toLocaleString('vi-VN'));
 
+      // 1. Gửi qua FormSubmit
       fetch('https://formsubmit.co/ajax/nkdeveloperclub@gmail.com', {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: fsPayload
       }).catch((fsErr) => console.warn('FormSubmit fast dispatch error:', fsErr));
+
+      // 2. Đồng thời gửi qua Web3Forms (Không lo bị chặn)
+      const w3Payload = new FormData();
+      w3Payload.append('access_key', '9809c16d-6cf1-4fa4-b200-e8a76a672962');
+      w3Payload.append('subject', `🚀 [HỒ SƠ MỚI] ${formData.fullName} (${formData.studentClass}) - Ban ${deptName}`);
+      w3Payload.append('from_name', 'NK Tech Club Recruitment Portal');
+      for (const [key, val] of fsPayload.entries()) {
+        if (!key.startsWith('_')) {
+          w3Payload.append(key, val);
+        }
+      }
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: w3Payload
+      }).catch((w3Err) => console.warn('Web3Forms fast dispatch error:', w3Err));
     } catch (e) {
       console.warn('Fast email error:', e);
     }
@@ -612,6 +662,7 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
       onSuccessSubmitted(newRecord);
     } catch (err) {
       console.error('Submit error:', err);
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
       setErrorMessage('Có lỗi xảy ra khi gửi hồ sơ. Vui lòng thử lại!');
     }
@@ -950,45 +1001,132 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
 
                 {/* STEP 5: Sub-Role Selection */}
                 {currentStep === 5 && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-black text-slate-800 mb-1">
-                        Vị trí cụ thể trong Ban <span className="text-rose-500">*</span>
+                        Vị trí chuyên môn / Lĩnh vực ứng tuyển <span className="text-rose-500">*</span>
                       </label>
                       <p className="text-xs text-amber-900 font-bold bg-amber-200/90 px-3 py-1 rounded-xl border border-amber-400 inline-block">
-                        ⚡ Bạn có thể chọn nhiều vị trí cùng lúc!
+                        ⚡ Bạn có thể chọn 1 hoặc nhiều lĩnh vực cùng lúc (Bài thi ở Bước 7 sẽ tự động tích hợp)!
                       </p>
                     </div>
+
                     {(() => {
+                      const allRoles = DEPARTMENTS.flatMap((d) => d.subRoles);
                       const dept = DEPARTMENTS.find((d) => d.id === formData.department);
-                      const roles = dept ? dept.subRoles : [];
-                      const currentSelected = parseSubRoles(formData.subRole, roles);
+                      const primaryRoles = dept ? dept.subRoles : [];
+                      const currentSelected = parseSubRoles(formData.subRole, allRoles);
+                      const requiredMods = getRequiredCastingModules(formData.subRole, formData.department, allRoles);
 
                       return (
-                        <div className="space-y-2.5">
-                          {roles.map((role) => {
-                            const isSelected = currentSelected.includes(role);
-                            return (
-                              <button
-                                key={role}
-                                type="button"
-                                onClick={() => handleSubRoleToggle(role)}
-                                className={`w-full p-3.5 rounded-2xl border-3 font-bold text-sm text-left transition-all flex items-center justify-between cursor-pointer ${
-                                  isSelected
-                                    ? 'bg-amber-300 border-amber-950 text-amber-950 shadow-[0_4px_0_rgba(120,53,15,0.8)]'
-                                    : 'bg-white border-amber-950/20 text-slate-700 hover:border-amber-950 hover:bg-amber-100/60'
-                                }`}
-                              >
-                                <div className="flex items-center gap-2.5">
-                                  <span className={`w-5 h-5 rounded-lg border-2 border-amber-950 flex items-center justify-center text-xs font-black shrink-0 ${isSelected ? 'bg-amber-950 text-amber-300' : 'bg-white'}`}>
-                                    {isSelected ? '✓' : ''}
+                        <div className="space-y-3.5">
+                          {/* Primary Department Roles */}
+                          <div className="space-y-2">
+                            <span className="text-xs font-black text-amber-950 flex items-center gap-1.5">
+                              <span>🎯</span> Các vị trí thuộc <strong>{dept?.name.split(' (')[0]}</strong>:
+                            </span>
+                            <div className="space-y-2">
+                              {primaryRoles.map((role) => {
+                                const isSelected = currentSelected.includes(role);
+                                return (
+                                  <button
+                                    key={role}
+                                    type="button"
+                                    onClick={() => handleSubRoleToggle(role)}
+                                    className={`w-full p-3.5 rounded-2xl border-3 font-bold text-sm text-left transition-all flex items-center justify-between cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-amber-300 border-amber-950 text-amber-950 shadow-[0_4px_0_rgba(120,53,15,0.8)]'
+                                        : 'bg-white border-amber-950/20 text-slate-700 hover:border-amber-950 hover:bg-amber-100/60'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2.5">
+                                      <span className={`w-5 h-5 rounded-lg border-2 border-amber-950 flex items-center justify-center text-xs font-black shrink-0 ${isSelected ? 'bg-amber-950 text-amber-300' : 'bg-white'}`}>
+                                        {isSelected ? '✓' : ''}
+                                      </span>
+                                      <span>{role}</span>
+                                    </div>
+                                    {isSelected && <Check className="w-5 h-5 text-amber-950 stroke-[3] shrink-0" />}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Cross-Department Roles Expandable Toggle */}
+                          <div className="pt-2 border-t-2 border-amber-950/20">
+                            <button
+                              type="button"
+                              onClick={() => setShowCrossDeptRoles(!showCrossDeptRoles)}
+                              className="w-full py-2.5 px-3.5 rounded-xl border-2 border-dashed border-amber-950/40 bg-amber-100/70 hover:bg-amber-200/70 text-amber-950 font-black text-xs flex items-center justify-between cursor-pointer transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <span>✨</span>
+                                <span>Muốn ứng tuyển thêm vai trò ở Ban khác? (Đa ban / Đa lĩnh vực)</span>
+                              </span>
+                              <span className="text-amber-900 font-extrabold">{showCrossDeptRoles ? '▲ Thu gọn' : '▼ Chọn thêm'}</span>
+                            </button>
+
+                            {showCrossDeptRoles && (
+                              <div className="space-y-3 mt-3 p-3.5 bg-white/90 rounded-2xl border-2 border-amber-950/30 shadow-inner">
+                                {DEPARTMENTS.filter((d) => d.id !== formData.department).map((otherDept) => (
+                                  <div key={otherDept.id} className="space-y-1.5">
+                                    <span className="text-xs font-black text-amber-950 flex items-center gap-1">
+                                      <span>{otherDept.id === 'chuyen-mon' ? '💻' : otherDept.id === 'truyen-thong' ? '🎨' : '👥'}</span>
+                                      <span>{otherDept.name.split(' (')[0]}:</span>
+                                    </span>
+                                    <div className="space-y-1.5 pl-1.5">
+                                      {otherDept.subRoles.map((role) => {
+                                        const isSelected = currentSelected.includes(role);
+                                        return (
+                                          <button
+                                            key={role}
+                                            type="button"
+                                            onClick={() => handleSubRoleToggle(role)}
+                                            className={`w-full p-2.5 rounded-xl border-2 font-bold text-xs text-left transition-all flex items-center justify-between cursor-pointer ${
+                                              isSelected
+                                                ? 'bg-amber-300 border-amber-950 text-amber-950 font-black shadow-xs'
+                                                : 'bg-white border-amber-950/20 text-slate-700 hover:border-amber-950 hover:bg-amber-50'
+                                            }`}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <span className={`w-4 h-4 rounded-md border-2 border-amber-950 flex items-center justify-center text-[10px] font-black shrink-0 ${isSelected ? 'bg-amber-950 text-amber-300' : 'bg-white'}`}>
+                                                {isSelected ? '✓' : ''}
+                                              </span>
+                                              <span>{role}</span>
+                                            </div>
+                                            {isSelected && <Check className="w-4 h-4 text-amber-950 stroke-[3] shrink-0" />}
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Live Selection & Integrated Test Modules Preview */}
+                          {currentSelected.length > 0 && (
+                            <div className="bg-gradient-to-r from-amber-200 via-orange-100 to-amber-300 border-3 border-amber-950 rounded-2xl p-3.5 space-y-2 shadow-sm text-amber-950">
+                              <div className="flex items-center justify-between text-xs font-black">
+                                <span>🎯 Đã chọn: {currentSelected.length} lĩnh vực</span>
+                                <span className="bg-amber-950 text-amber-300 px-2.5 py-0.5 rounded-lg text-[11px] font-extrabold">
+                                  {requiredMods.length > 1 ? `🌟 Bài thi Tích Hợp (${requiredMods.length} phần)` : '📝 Bài thi Chuyên Môn (1 phần)'}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {currentSelected.map((r) => (
+                                  <span key={r} className="bg-white text-amber-950 text-xs font-extrabold px-2.5 py-1 rounded-xl border border-amber-950/40 shadow-2xs flex items-center gap-1">
+                                    <span className="text-emerald-600">✓</span>
+                                    <span>{r}</span>
                                   </span>
-                                  <span>{role}</span>
-                                </div>
-                                {isSelected && <Check className="w-5 h-5 text-amber-950 stroke-[3] shrink-0" />}
-                              </button>
-                            );
-                          })}
+                                ))}
+                              </div>
+                              <div className="text-[11px] font-bold text-amber-950 bg-white/80 p-2 rounded-xl border border-amber-950/20">
+                                👉 <strong>Cấu trúc bài thi ở Bước 7:</strong> {requiredMods.map((m) => getModuleLabel(m)).join(' + ')}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })()}
@@ -1180,6 +1318,38 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
                               <span>{isFullscreen ? 'Fullscreen: ON' : '🖥️ Bật Fullscreen (F11)'}</span>
                             </button>
                           </div>
+
+                          {/* Integrated Test Modules Header & Quick Badges */}
+                          {requiredModules.length > 1 ? (
+                            <div className="bg-gradient-to-r from-purple-100 via-indigo-100 to-cyan-100 border-3 border-amber-950 rounded-2xl p-4 shadow-sm space-y-2.5">
+                              <div className="flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 text-indigo-900 fill-indigo-300 stroke-[2.5]" />
+                                <h3 className="font-black text-indigo-950 text-base md:text-lg">
+                                  🌟 BÀI THI TÍCH HỢP ĐA LĨNH VỰC ({requiredModules.length} Chuyên Ngành Tích Hợp)
+                                </h3>
+                              </div>
+                              <p className="text-xs md:text-sm text-indigo-900 font-semibold leading-relaxed">
+                                Bạn đã chọn các lĩnh vực: <strong>{parseSubRoles(formData.subRole, availableRoles).join(' & ')}</strong>. Hệ thống đã tổng hợp đầy đủ các phần thi chuyên môn tương ứng bên dưới:
+                              </p>
+                              <div className="flex flex-wrap gap-2 pt-1">
+                                {requiredModules.map((mod) => (
+                                  <span
+                                    key={mod}
+                                    className="px-3 py-1.5 rounded-xl bg-white border-2 border-indigo-950 text-indigo-950 font-black text-xs shadow-xs flex items-center gap-1.5"
+                                  >
+                                    <span>{getModuleLabel(mod)}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="bg-amber-100/90 border-3 border-amber-950 rounded-2xl p-3.5 flex items-center gap-2 text-amber-950 shadow-xs">
+                              <span className="text-xl">🎯</span>
+                              <p className="text-xs sm:text-sm font-black">
+                                Bài thi chuyên môn cho: <span className="text-rose-600 underline">{parseSubRoles(formData.subRole, availableRoles).join(' & ')}</span> ({getModuleLabel(requiredModules[0])})
+                              </p>
+                            </div>
+                          )}
 
                     {/* HR & OPERATIONS CASTING QUESTIONS */}
                     {requiredModules.includes('hr') && (

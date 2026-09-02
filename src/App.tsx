@@ -11,6 +11,7 @@ import { ApplicantsSpaceStation } from './components/ApplicantsSpaceStation';
 import { CosmicSuccessModal } from './components/CosmicSuccessModal';
 import { CartoonMascotWidget } from './components/CartoonMascotWidget';
 import { Footer } from './components/Footer';
+import { deduplicateApplicants } from './lib/dedup';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'form' | 'departments' | 'applicants'>('form');
@@ -26,10 +27,12 @@ export default function App() {
     const unsubscribe = onSnapshot(
       collection(db, 'applications'),
       (snapshot) => {
-        const officialApps = snapshot.docs.filter(
-          (d) => (d.data().createdAt || '') >= OFFICIAL_LAUNCH_TIME
-        );
-        setApplicantsCount(officialApps.length);
+        const rawApps: ApplicationRecord[] = snapshot.docs
+          .map((d) => ({ id: d.id, ...(d.data() as ApplicationRecord) }))
+          .filter((d) => (d.createdAt || '') >= OFFICIAL_LAUNCH_TIME);
+
+        const dedupedApps = deduplicateApplicants(rawApps);
+        setApplicantsCount(dedupedApps.length);
       },
       (err) => {
         console.error('Firestore count listener error:', err);
