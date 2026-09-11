@@ -11,7 +11,7 @@ const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 }, firebaseConfig.firestoreDatabaseId || undefined);
 
-const CLUB_GMAIL = 'nkdeveloperclub@gmail.com';
+const CLUB_GMAIL = 'thiensonhp07@gmail.com';
 
 const deptMap: Record<string, string> = {
   'chuyen-mon': 'Ban Chuyên Môn (Tech Core)',
@@ -119,14 +119,17 @@ async function run() {
   // Sắp xếp theo ngày nộp từ cũ đến mới
   list.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
 
-  console.log(`🚀 Bắt đầu gửi lại toàn bộ ${list.length} hồ sơ qua FormSubmit tới: ${CLUB_GMAIL}`);
+  // Chỉ gửi các hồ sơ mới nhất từ hôm nay (11/09)
+  const targetList = list.filter(a => (a.fullName || '').includes('THÔNG') || (a.fullName || '').includes('Duy') || (a.email || '').includes('tranmydung') || (a.email || '').includes('anhduytn'));
+
+  console.log(`🚀 Bắt đầu gửi ${targetList.length} hồ sơ mới qua FormSubmit tới: ${CLUB_GMAIL}`);
   console.log(`================================================================`);
 
   let countSuccess = 0;
   let countFailed = 0;
 
-  for (let i = 0; i < list.length; i++) {
-    const data = list[i];
+  for (let i = 0; i < targetList.length; i++) {
+    const data = targetList[i];
     const name = data.fullName || 'Ẩn danh';
     const sClass = data.studentClass || 'N/A';
     const dept = data.departmentName || deptMap[data.department] || data.department || 'CLB';

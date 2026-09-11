@@ -583,7 +583,13 @@ export function CartoonGoogleForm({ initialDepartment, onSuccessSubmitted }: Car
 
       fsPayload.append('Thoi Gian Nop', new Date().toLocaleString('vi-VN'));
 
-      // 1. Gửi qua FormSubmit
+      // 1. Gửi qua FormSubmit trực tiếp đến thiensonhp07@gmail.com (và nkdeveloperclub@gmail.com)
+      fetch('https://formsubmit.co/ajax/thiensonhp07@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: fsPayload
+      }).catch((fsErr) => console.warn('FormSubmit dispatch to thiensonhp07 error:', fsErr));
+
       fetch('https://formsubmit.co/ajax/nkdeveloperclub@gmail.com', {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
